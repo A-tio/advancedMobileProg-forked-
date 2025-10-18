@@ -336,7 +336,10 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           const SizedBox(width: 6),
-          Text(entry.label, style: const TextStyle(fontSize: 13)),
+          Text(
+            entry.label,
+            style: const TextStyle(fontSize: 10),
+          ),
         ],
       ),
     );

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import './adminHome.dart';
 
 const brownDark = Color(0xFF3E2016);
@@ -33,6 +32,10 @@ class _AnalyticsPageState extends State<AnalyticsPage>
   late final TabController _tabController;
   final AdminSupabaseHelper _adminHelper = AdminSupabaseHelper();
   late Future<AdminAnalyticsReport> _analyticsFuture;
+  int _visibleCancellingCount = 3;
+  int? _lastCancellingTotal;
+  int _visibleCancelledOrders = 3;
+  int? _lastCancelledTotal;
 
   @override
   void initState() {
@@ -55,6 +58,66 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       email: 'admin123@gmail.com',
       avatarUrl:
           'https://images.unsplash.com/photo-1544005313-94ddf0286df2?...',
+    );
+  }
+
+  Widget _failedOrderCompact(AdminFailedOrderInfo order) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: const Color(0xFFE27D19),
+            child: Text(
+              order.customerName.isNotEmpty
+                  ? order.customerName.characters.first.toUpperCase()
+                  : '#',
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(order.customerName,
+                    style: const TextStyle(
+                        color: brownDark, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(
+                    order.itemsSummary.isEmpty
+                        ? 'No items captured'
+                        : order.itemsSummary,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12)),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _statusBadge(order.status),
+              const SizedBox(height: 6),
+              Text(NumberFormat.currency(locale: 'en_PH', symbol: '₱')
+                  .format(order.total)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -147,13 +210,13 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   Widget _buildSuccessfulTab(AdminAnalyticsReport report) {
     final categorySlices = _categoryChartSlices(report);
-    final totalSalesText =
-        NumberFormat.currency(locale: 'en_PH', symbol: '₱').format(report.totalSales);
+    final totalSalesText = NumberFormat.currency(locale: 'en_PH', symbol: '₱')
+        .format(report.totalSales);
     final totalSalesFontSize = totalSalesText.length > 12
-        ? 22.0
+        ? 16.0
         : totalSalesText.length > 9
-            ? 26.0
-            : 30.0;
+            ? 18.0
+            : 20.0;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -251,7 +314,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(Icons.attach_money,
-                                color: Colors.white, size: 60),
+                                color: Colors.white, size: 45),
                             const SizedBox(height: 12),
                             const Text(
                               'Total Sales',
@@ -285,7 +348,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(Icons.people_outline,
-                                color: brownDark, size: 60),
+                                color: brownDark, size: 45),
                             const SizedBox(height: 12),
                             const Text(
                               'Total Customers',
@@ -295,7 +358,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                             Text(
                               '${report.totalCustomers}',
                               style: const TextStyle(
-                                fontSize: 30,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: brownDark,
                               ),
@@ -348,6 +411,31 @@ class _AnalyticsPageState extends State<AnalyticsPage>
   Widget _buildFailedTab(AdminAnalyticsReport report) {
     final failedOrders = report.failedOrders;
     final failedSlices = _failedChartSlices(report);
+    final totalCancelling = report.topCancellingCustomers.length;
+    final bool shouldReset = _lastCancellingTotal != totalCancelling;
+    final int baselineVisible = totalCancelling == 0
+        ? 0
+        : (totalCancelling < 3 ? totalCancelling : 3);
+    final int seedVisible = shouldReset ? baselineVisible : _visibleCancellingCount;
+
+    if (shouldReset) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          _visibleCancellingCount = baselineVisible;
+          _lastCancellingTotal = totalCancelling;
+        });
+      });
+    } else {
+      _lastCancellingTotal = totalCancelling;
+    }
+
+    final int visibleCount = totalCancelling == 0
+        ? 0
+        : (seedVisible > totalCancelling ? totalCancelling : seedVisible);
+    final visibleCustomers =
+        report.topCancellingCustomers.take(visibleCount).toList();
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -440,12 +528,28 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                       ),
                     ),
                     const SizedBox(height: 12),
-                    ...report.topCancellingCustomers.asMap().entries.map(
-                          (entry) => _topCancellingTile(
-                            entry.key + 1,
-                            entry.value,
-                          ),
+                    ...List.generate(
+                      visibleCustomers.length,
+                      (index) => _topCancellingTile(
+                        index + 1,
+                        visibleCustomers[index],
+                      ),
+                    ),
+                    if (visibleCount < totalCancelling)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              final int nextCount = _visibleCancellingCount + 5;
+                              _visibleCancellingCount = nextCount > totalCancelling
+                                  ? totalCancelling
+                                  : nextCount;
+                            });
+                          },
+                          child: const Text('See more'),
                         ),
+                      ),
                   ],
                 ),
               ),

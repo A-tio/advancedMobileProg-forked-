@@ -104,6 +104,21 @@ class _UserViewProductPageState extends State<UserViewProductPage> {
     );
   }
 
+  void _adjustQuantity(int delta) {
+    final rawStock = widget.productData['stock'];
+    final stock = rawStock is int ? rawStock : int.tryParse('$rawStock') ?? 0;
+    if (stock <= 0) {
+      setState(() => _quantityController.text = '0');
+      return;
+    }
+    final current = int.tryParse(_quantityController.text) ?? 1;
+    final updated = (current + delta).clamp(1, stock).toInt();
+    if (updated == current) {
+      return;
+    }
+    setState(() => _quantityController.text = updated.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     final productData = widget.productData;
@@ -195,18 +210,21 @@ class _UserViewProductPageState extends State<UserViewProductPage> {
 
                       // Product Name
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            productData['name'] as String,
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4B2E19),
-                              height: 1.2,
+                          Expanded(
+                            child: Text(
+                              productData['name'] as String,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF4B2E19),
+                                height: 1.2,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(width: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 18, vertical: 8),
@@ -312,121 +330,125 @@ class _UserViewProductPageState extends State<UserViewProductPage> {
                             ),
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                _selectedVariation != null
-                                    ? '₱${_selectedVariation!['price']}'
-                                    : '₱${productData['lowest_price'] ?? '--'}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF4B2E19),
+                              Expanded(
+                                child: Text(
+                                  _selectedVariation != null
+                                      ? '₱${_selectedVariation!['price']}'
+                                      : '₱${productData['lowest_price'] ?? '--'}',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF4B2E19),
+                                  ),
                                 ),
                               ),
-                              // ElevatedButton(
-                              //   style: ElevatedButton.styleFrom(
-                              //     backgroundColor: const Color(0xFFE27D19),
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(12),
-                              //     ),
-                              //     padding: const EdgeInsets.symmetric(
-                              //         horizontal: 20, vertical: 10),
-                              //   ),
-                              //   onPressed: () {
-                              //     ScaffoldMessenger.of(context).showSnackBar(
-                              //       SnackBar(
-                              //         duration: const Duration(seconds: 2),
-                              //         backgroundColor: Colors.white,
-                              //         behavior: SnackBarBehavior.floating,
-                              //         margin: const EdgeInsets.symmetric(
-                              //             horizontal: 60, vertical: 400),
-                              //         shape: RoundedRectangleBorder(
-                              //           borderRadius: BorderRadius.circular(16),
-                              //         ),
-                              //         content: Column(
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: [
-                              //             const Icon(Icons.check,
-                              //                 color: Color(0xFFE27D19),
-                              //                 size: 28),
-                              //             const SizedBox(height: 8),
-                              //             Text(
-                              //               'haha added to cart',
-                              //               style: const TextStyle(
-                              //                 color: Colors.black87,
-                              //                 fontWeight: FontWeight.bold,
-                              //                 fontSize: 16,
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     );
-                              //   },
-                              //   child: const Text(
-                              //     'Add to Cart',
-                              //     style: TextStyle(
-                              //       color: Colors.white,
-                              //       fontWeight: FontWeight.bold,
-                              //       fontSize: 16,
-                              //     ),
-                              //   ),
-                              // )
+                              const SizedBox(width: 12),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 44,
+                                    height: 44,
+                                    child: ElevatedButton(
+                                      onPressed: () => _adjustQuantity(1),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFE27D19),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 90,
+                                    child: TextFormField(
+                                      controller: _quantityController,
+                                      textAlign: TextAlign.center,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 12),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF4B2E19),
+                                          ),
+                                        ),
+                                        suffixText:
+                                            '/ ${productData['stock']}',
+                                      ),
+                                      onChanged: (val) {
+                                        final value = int.tryParse(val) ?? 0;
+                                        if (value >
+                                            (productData['stock'] ?? 0)) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Quantity exceeds available stock.'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 44,
+                                    height: 44,
+                                    child: ElevatedButton(
+                                      onPressed: () => _adjustQuantity(-1),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFE27D19),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.remove,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ],
                       ),
 
                       const SizedBox(height: 24),
-
-// Quantity Input + Add to Cart Button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Quantity Input
-                          Expanded(
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'Quantity',
-                                labelStyle:
-                                    const TextStyle(color: Color(0xFF4B2E19)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Color(0xFF4B2E19)),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                suffixText: '/ ${productData['stock']}',
-                              ),
-                              onChanged: (val) {
-                                final value = int.tryParse(val) ?? 0;
-                                if (value > (productData['stock'] ?? 0)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Quantity exceeds available stock.'),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              },
-                              controller: _quantityController,
-                            ),
-                          ),
-
-                          const SizedBox(width: 16),
-
-                          // Add to Cart Button
-                          ElevatedButton(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFE27D19),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 14),
+                                  horizontal: 20, vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -435,7 +457,8 @@ class _UserViewProductPageState extends State<UserViewProductPage> {
                                 ? null
                                 : () async {
                                     final stock = productData['stock'] ?? 0;
-                                    final inputText = _quantityController.text;
+                                    final inputText =
+                                        _quantityController.text;
                                     final inputQuantity =
                                         int.tryParse(inputText) ?? 0;
                                     final name =
@@ -481,7 +504,7 @@ class _UserViewProductPageState extends State<UserViewProductPage> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),

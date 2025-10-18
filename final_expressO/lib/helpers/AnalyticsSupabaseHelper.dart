@@ -602,12 +602,13 @@ class AdminSupabaseHelper {
 
       // Return the final report consumed by the analytics screen.
       return AdminAnalyticsReport(
-        totalOrders: successfulOrdersCount, // now successful orders count
+        totalOrders: successfulOrdersCount,
         totalSales: totalSales,
         totalCustomers: totalCustomers,
         topProducts: topProducts.take(5).toList(),
         failedOrders: failedOrders,
-        topCancellingCustomers: topCustomers.take(5).toList(),
+        topCancellingCustomers:
+            List<AdminCustomerCancellationStat>.unmodifiable(topCustomers),
         categoryStats: categoryStats,
       );
     } catch (e) {

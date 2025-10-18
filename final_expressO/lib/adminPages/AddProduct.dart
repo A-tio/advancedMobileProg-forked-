@@ -564,7 +564,7 @@ class _AddProductStep2State extends State<AddProductStep2> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontSize: 12),
                       ),
                     ),
                   ),

@@ -144,8 +144,9 @@ class _CartPageState extends State<CartPage> {
                               'Go back to Homepage',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w600,
+                           
                               ),
                             ),
                           ),

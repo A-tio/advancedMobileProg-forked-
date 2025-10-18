@@ -429,7 +429,7 @@ class _NeilCartState extends State<NeilCart> {
                                                 style: const TextStyle(
                                                   fontFamily: 'Quicksand',
                                                   fontWeight: FontWeight.w700,
-                                                  fontSize: 16,
+                                                  fontSize: 13,
                                                   color: Color(0xFF2c1d16),
                                                 ),
                                                 maxLines: 2,
@@ -502,27 +502,30 @@ class _NeilCartState extends State<NeilCart> {
           SizedBox(height: 30),
         ],
       ),
-      floatingActionButton: AddToCartFAB(
-        itemCount: 3, // replace with your cart count
-        onTap: () {
-          // Show a temporary SnackBar
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Going to Cart!'),
-              duration: Duration(seconds: 1),
-            ),
-          );
-
-          // Navigate to DummyOrderPage after a slight delay so SnackBar shows
-          Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CartPage(),
+      floatingActionButton: IconTheme(
+        data: const IconThemeData(color: Colors.white),
+        child: AddToCartFAB(
+          itemCount: 3, // replace with your cart count
+          onTap: () {
+            // Show a temporary SnackBar
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Going to Cart!'),
+                duration: Duration(seconds: 1),
               ),
             );
-          });
-        },
+
+            // Navigate to DummyOrderPage after a slight delay so SnackBar shows
+            Future.delayed(const Duration(milliseconds: 500), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CartPage(),
+                ),
+              );
+            });
+          },
+        ),
       ),
     );
   }

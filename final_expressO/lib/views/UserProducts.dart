@@ -301,168 +301,203 @@ class _NeilCartState extends State<NeilCart> {
 
           // 📜 Grid of products
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                mainAxisSpacing: 24,
-                crossAxisSpacing: 24,
-                childAspectRatio: 0.8, // approximate width:height ratio
-              ),
-              itemCount: filteredProducts.length,
-              itemBuilder: (context, index) {
-                final product = filteredProducts[index];
-                final variations = product['variations'] ?? 'Unknown';
-                final name = product['name'] ?? 'Unknown';
-                final price = product['lowest_price']?.toString() ?? 'N/A';
-                final imageUrl =
-                    product['img'] ?? 'https://placehold.co/200x150/png';
-
-                return ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minHeight: 190, // minimum height
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      // Temporary test data for product page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => UserViewProductPage(
-                            productData: {
-                              'id': product['id'],
-                              'name': name,
-                              'lowest_price': price,
-                              'img': imageUrl,
-                              'status': product['status'],
-                              'desc': product['desc'],
-                              'category_name': product['category_name'],
-                              'stock': product['stock'],
-                              'variations': variations,
-                            },
+            child: filteredProducts.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.coffee_outlined,
+                            size: 48, color: Color(0xFF9E7A6E)),
+                        SizedBox(height: 8),
+                        Text(
+                          'No products found',
+                          style: TextStyle(
+                            fontFamily: 'Quicksand',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF9E7A6E),
                           ),
                         ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFCFAF3),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
+                        SizedBox(height: 6),
+                        Text(
+                          'Try a different keyword or product',
+                          style: TextStyle(
+                            fontFamily: 'Quicksand',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFBFA798),
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Image
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16)),
-                            child: AspectRatio(
-                              aspectRatio: 4 / 3, // maintain image ratio
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    const Icon(Icons.image),
-                              ),
-                            ),
-                          ),
+                        ),
+                        SizedBox(height: 4),
+              
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 220,
+                      mainAxisSpacing: 24,
+                      crossAxisSpacing: 24,
+                      childAspectRatio: 0.8, // approximate width:height ratio
+                    ),
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+                      final variations = product['variations'] ?? 'Unknown';
+                      final name = product['name'] ?? 'Unknown';
+                      final price = product['lowest_price']?.toString() ?? 'N/A';
+                      final imageUrl =
+                          product['img'] ?? 'https://placehold.co/200x150/png';
 
-                          // Name
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 1),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // Texts (name + price) on the left
-                                  Expanded(
-                                    child: Column(
+                      return ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: 180, // minimum height
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            // Temporary test data for product page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UserViewProductPage(
+                                  productData: {
+                                    'id': product['id'],
+                                    'name': name,
+                                    'lowest_price': price,
+                                    'img': imageUrl,
+                                    'status': product['status'],
+                                    'desc': product['desc'],
+                                    'category_name': product['category_name'],
+                                    'stock': product['stock'],
+                                    'variations': variations,
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFCFAF3),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(16)),
+                                  child: AspectRatio(
+                                    aspectRatio: 4 / 3, // maintain image ratio
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) =>
+                                          const Icon(Icons.image),
+                                    ),
+                                  ),
+                                ),
+
+                                // Name
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize:
-                                          MainAxisSize.min, // wrap only content
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          name,
-                                          style: const TextStyle(
-                                            fontFamily: 'Quicksand',
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 14,
-                                            letterSpacing: -0.5,
-                                            color: Color(0xFF2c1d16),
+                                        // Texts (name + price) on the left
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize:
+                                                MainAxisSize.min, // wrap only content
+                                            children: [
+                                              Text(
+                                                name,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Quicksand',
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 16,
+                                                  color: Color(0xFF2c1d16),
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                "₱$price",
+                                                style: const TextStyle(
+                                                  fontFamily: 'Quicksand',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF603B17),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          "₱$price",
-                                          style: const TextStyle(
-                                            fontFamily: 'Quicksand',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xFF603B17),
+
+                                        const SizedBox(width: 8),
+
+                                        // Add button on the right
+                                        Container(
+                                          height: 28,
+                                          width: 28,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE27D19),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: IconButton(
+                                            padding: EdgeInsets.zero,
+                                            iconSize: 16,
+                                            icon: const Icon(Icons.add,
+                                                color: Colors.white),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) => UserViewProductPage(
+                                                    productData: {
+                                                      'id': product['id'],
+                                                      'name': name,
+                                                      'lowest_price': price,
+                                                      'img': imageUrl,
+                                                      'status': product['status'],
+                                                      'desc': product['desc'],
+                                                      'category_name':
+                                                          product['category_name'],
+                                                      'stock': product['stock'],
+                                                      'variations': variations,
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-
-                                  // Add button on the right
-                                  Container(
-                                    height: 28,
-                                    width: 28,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFE27D19),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      iconSize: 16,
-                                      icon: const Icon(Icons.add,
-                                          color: Colors.white),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => UserViewProductPage(
-                                              productData: {
-                                                'id': product['id'],
-                                                'name': name,
-                                                'lowest_price': price,
-                                                'img': imageUrl,
-                                                'status': product['status'],
-                                                'desc': product['desc'],
-                                                'category_name':
-                                                    product['category_name'],
-                                                'stock': product['stock'],
-                                                'variations': variations,
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
           SizedBox(height: 30),
         ],

@@ -85,13 +85,75 @@ class _CartPageState extends State<CartPage> {
         // ],
       ),
       body: cartList.isEmpty
-          ? const Center(
-              child: Text(
-                'Your cart is empty.',
-                style: TextStyle(
-                  fontFamily: 'Quicksand',
-                  fontSize: 16,
-                  color: Colors.grey,
+          ? SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/coffee_order_pic.png',
+                        width: 200,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'No records yet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: Color(0xFF603B17),
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      const Text(
+                        "This space looks empty...let's fill it with",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w200,
+                          color: Color(0xFF9C7E60),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'something delicious',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w200,
+                          color: Color(0xFF9C7E60),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE27D19),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Go back to Homepage',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
             )

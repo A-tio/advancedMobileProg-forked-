@@ -221,6 +221,7 @@ class _AddProductStep1State extends State<AddProductStep1> {
               controller: _nameController,
               label: "Product Name",
               hint: "Enter product name",
+              maxLength: 25,
             ),
             const SizedBox(height: 16),
             _buildTextField(
@@ -292,6 +293,7 @@ class _AddProductStep1State extends State<AddProductStep1> {
     required String label,
     required String hint,
     int maxLines = 1,
+    int? maxLength,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -302,6 +304,7 @@ class _AddProductStep1State extends State<AddProductStep1> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
+        maxLength: maxLength,
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -423,7 +426,6 @@ class _AddProductStep2State extends State<AddProductStep2> {
         "variations": _variations,
         "final": true,
       };
-
       widget.onFinalize(updatedDraft);
     }
   }
@@ -438,8 +440,7 @@ class _AddProductStep2State extends State<AddProductStep2> {
     };
 
     widget.onFinalize(updatedDraft);
-
-    widget.onBack(); // Go back
+    widget.onBack();
   }
 
   @override

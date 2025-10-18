@@ -15,10 +15,10 @@ class AddProductFlow extends StatefulWidget {
 class _AddProductFlowState extends State<AddProductFlow> {
   int _currentStep = 1;
   bool _loading = true;
-  bool _success = false;
   String? _error;
   bool _submitLoading = false;
   bool _initialized = false;
+  bool _success = false;
 
   final supabaseHelper = AdminSupabaseHelper();
 
@@ -138,21 +138,93 @@ class _AddProductFlowState extends State<AddProductFlow> {
           _error = response['message'];
         });
         return;
-      } else {
-        _confirmSuccess();
       }
+
+      setState(() => _submitLoading = false);
+      _showFinalizeSuccessModal();
     } catch (e) {
       print("Error submitting final submit: $e");
       setState(() => _submitLoading = false);
     }
   }
 
+  void _showFinalizeSuccessModal() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFFCFAF3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: SizedBox(
+          width: 300,
+          height: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 32),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Successful!",
+                style: TextStyle(
+                  color: Color(0xFF603B17),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Your order was placed successfully.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Color(0xFF9C7E60), fontSize: 14),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE27D19),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/products',
+                      (r) => false,
+                    );
+                  },
+                  child: const Text(
+                    "Go back to Homepage",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_success) {
-      return const Center(child: Text('Product Successfully added!'));
-    }
-
     return Scaffold(
       backgroundColor: Colors.brown[50],
       body: SafeArea(

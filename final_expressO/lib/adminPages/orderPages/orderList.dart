@@ -323,29 +323,30 @@ class _OrderListPageState extends State<OrderListPage>
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 64,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(height: 16),
+                  children: const [
+                    Icon(Icons.coffee_outlined,
+                        size: 48, color: Color(0xFF9E7A6E)),
+                    SizedBox(height: 8),
                     Text(
-                      'No orders found',
+                      'No products found',
                       style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Quicksand',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF9E7A6E),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 6),
                     Text(
-                      'Try a different search or filter',
+                      'Try a different keyword or product',
                       style: TextStyle(
-                        color: Colors.grey[500],
+                        fontFamily: 'Quicksand',
                         fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFBFA798),
                       ),
                     ),
+                    SizedBox(height: 4),
                   ],
                 ),
               );

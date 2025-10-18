@@ -147,6 +147,13 @@ class _AnalyticsPageState extends State<AnalyticsPage>
 
   Widget _buildSuccessfulTab(AdminAnalyticsReport report) {
     final categorySlices = _categoryChartSlices(report);
+    final totalSalesText =
+        NumberFormat.currency(locale: 'en_PH', symbol: '₱').format(report.totalSales);
+    final totalSalesFontSize = totalSalesText.length > 12
+        ? 22.0
+        : totalSalesText.length > 9
+            ? 26.0
+            : 30.0;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -216,7 +223,7 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                                Text('${d.x} (${d.y})'),
+                                Text('${d.x}'),
                               ],
                             ),
                           ),
@@ -252,11 +259,9 @@ class _AnalyticsPageState extends State<AnalyticsPage>
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              NumberFormat.currency(
-                                      locale: 'en_PH', symbol: '₱')
-                                  .format(report.totalSales),
-                              style: const TextStyle(
-                                fontSize: 30,
+                              totalSalesText,
+                              style: TextStyle(
+                                fontSize: totalSalesFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

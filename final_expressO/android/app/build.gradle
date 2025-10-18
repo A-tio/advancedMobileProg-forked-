@@ -13,6 +13,7 @@ android {
     namespace = "com.example.expressO"
     compileSdk = 35
     ndkVersion = "25.1.8937393"
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

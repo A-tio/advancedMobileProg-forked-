@@ -102,19 +102,11 @@ class _UserOrderStatusFabOptimizedState
       });
 
       if (result['status'] == 'success' && result2['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Order updated to $status'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
         setState(() {
           _isFabExpanded = false;
         });
-
-        // Notify parent
         widget.onStatusChanged();
+        _showCancelSuccessModal();
       } else {
         // Database-level error (like constraint violation or network fail)
         ScaffoldMessenger.of(context).showSnackBar(
@@ -159,6 +151,68 @@ class _UserOrderStatusFabOptimizedState
           'You can only cancel an order up to when it\'s still processing!',
         ),
         backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _showCancelSuccessModal() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFFCFAF3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: SizedBox(
+          width: 300,
+          height: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.shopping_bag,
+                  color: Color(0xFFFFA200), size: 60),
+              const SizedBox(height: 16),
+              const Text(
+                "Order Cancelled",
+                style: TextStyle(
+                  color: Color(0xFF603B17),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "We're sorry to see you cancel.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Color(0xFF9C7E60), fontSize: 14),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE27D19),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text(
+                    "Go back to Homepage",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

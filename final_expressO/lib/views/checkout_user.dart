@@ -104,16 +104,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final navProvider = Provider.of<NavigationProvider>(context, listen: false);
     print(orderData['items']);
     final response = await userSupabaseHelper.insertOrder(orderData);
-    String message;
-    bool success = response['success'] == true;
+    final success = response['success'] == true;
 
-    print(response['success'] == true);
-    print(response['data'] != null);
-    print(widget.checkOutItems);
-
-    if (response['success'] == true && response['data'] != null) {
-      message = "Order inserted successfully!";
-
+    if (success && response['data'] != null) {
       for (final item in widget.checkOutItems) {
         print('-------------------------------------');
         print(item);
@@ -122,23 +115,94 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
       navProvider.setIndex(2);
       setState(() {
-        goToOrders = true;
+        loading = false;
       });
-    } else {
-      message = "There was a problem in our end, please try again later.";
+      _showOrderSuccessModal();
+      return;
     }
 
-    // ✅ UI feedback
+    const message =
+        "There was a problem in our end, please try again later.";
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: success ? Colors.green : Colors.red,
+      const SnackBar(
+        backgroundColor: Colors.red,
         content: Text(message),
-        duration: const Duration(seconds: 2),
+        duration: Duration(seconds: 2),
       ),
     );
     setState(() {
       loading = false;
     });
+  }
+
+  void _showOrderSuccessModal() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: const Color(0xFFFCFAF3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: SizedBox(
+          width: 300,
+          height: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("👏", style: TextStyle(fontSize: 50)),
+              const SizedBox(height: 16),
+              const Text(
+                "Thanks for your order!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFF603B17),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                "Please wait as we process your order",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFF9C7E60),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE27D19),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    setState(() {
+                      goToOrders = true;
+                    });
+                  },
+                  child: const Text(
+                    "Go back to Homepage",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override

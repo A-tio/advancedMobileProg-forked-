@@ -284,7 +284,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ? stat.categoryName!
                 : 'Category ${stat.categoryId}';
             return _LegendEntry(
-              '$label (${stat.itemCount})',
+              '$label',
               palette[index % palette.length],
             );
           });

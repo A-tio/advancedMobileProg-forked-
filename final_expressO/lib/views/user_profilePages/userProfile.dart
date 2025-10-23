@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_nexus/views/user_profilePages/user_recentActivities.dart';
+import 'package:firebase_nexus/views/user_OrderPages/orderList.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -185,7 +186,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             // ),
 
             // Recent Activities button
-            _buildRecentActivitiesButton(),
+            // _buildRecentActivitiesButton(),
           ],
         ),
       ),
@@ -458,7 +459,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const UserRecentActivities(),
+                builder: (_) => const OrderListPage(),
               ),
             );
           },
@@ -470,7 +471,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: const Text('View Recent Activities'),
+          child: const Text('View Recent Orders'),
         ),
       ),
     );

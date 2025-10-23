@@ -206,7 +206,7 @@ class _discountAddState extends State<discountAdd> {
         backgroundColor: AppColors.secondary,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Add Product",
+          "Add Discount",
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Quicksand',

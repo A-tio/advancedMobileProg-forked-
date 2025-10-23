@@ -5,6 +5,7 @@ import 'package:firebase_nexus/helpers/userPageSupabaseHelper.dart';
 import 'package:firebase_nexus/providers/navigation_provider.dart';
 import 'package:firebase_nexus/providers/userProvider.dart';
 import 'package:firebase_nexus/views/UserProducts.dart';
+import 'package:firebase_nexus/views/userFetchProduct.dart';
 import 'package:firebase_nexus/views/user_OrderPages/CartList.dart';
 import 'package:firebase_nexus/views/user_fetchProduct.dart';
 import 'package:firebase_nexus/widgets/loading_screens.dart';

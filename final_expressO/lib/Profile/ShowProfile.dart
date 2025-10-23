@@ -76,20 +76,20 @@ class _ShowProfileState extends State<ShowProfile> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            tooltip: 'Edit Profile',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => EditProfileModal(
-                  user: user!, // static for now
-                ),
-              );
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.edit, color: Colors.white),
+        //     tooltip: 'Edit Profile',
+        //     onPressed: () {
+        //       showDialog(
+        //         context: context,
+        //         builder: (ctx) => EditProfileModal(
+        //           user: user!, // static for now
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
       drawer: AdminDrawer(
         profileFuture: fetchUserProfile(), // <-- your future method

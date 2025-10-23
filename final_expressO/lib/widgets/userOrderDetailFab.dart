@@ -64,7 +64,7 @@ class _UserOrderStatusFabOptimizedState
         final status = checkIfCancelable['Status']?.toString().toLowerCase();
 
         // Only allow cancelation if still pending or processing
-        final isCancelable = status == 'pending' || status == 'processing';
+        final isCancelable = status == 'pending';
         final alreadyRejected = status == 'rejected';
 
         if (!isCancelable && !alreadyRejected) {
@@ -230,9 +230,8 @@ class _UserOrderStatusFabOptimizedState
         if (_isFabExpanded) ...[
           FloatingActionButton(
             backgroundColor: const Color(0xFFE53E3E),
-            onPressed: status == 'pending' || status == 'processing'
-                ? _showCancelModal
-                : _notifyInability,
+            onPressed:
+                status == 'pending' ? _showCancelModal : _notifyInability,
             heroTag: 'reject',
             child: const Icon(Icons.close),
           ),

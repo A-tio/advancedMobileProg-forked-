@@ -812,12 +812,12 @@ class AdminDrawer extends StatelessWidget {
                           label: 'Analytics',
                           route: '/analytics',
                           highlight: selectedRoute == '/analytics'),
-                      _navItem(
-                          context: context,
-                          icon: Icons.history,
-                          label: 'Transaction History',
-                          route: '/transactions',
-                          highlight: selectedRoute == '/transactions'),
+                      // _navItem(
+                      //     context: context,
+                      //     icon: Icons.history,
+                      //     label: 'Transaction History',
+                      //     route: '/transactions',
+                      //     highlight: selectedRoute == '/transactions'),
 
                       const SizedBox(height: 16),
                       const Text('More',

@@ -561,10 +561,13 @@ class _AnalyticsPageState extends State<AnalyticsPage>
   }
 
   List<_ChartData> _categoryChartSlices(AdminAnalyticsReport report) {
-    final stats = report.categoryStats;
+    final stats = List<AdminCategoryStat>.from(report.categoryStats);
     if (stats.isEmpty) {
       return [_ChartData('No data', 1, Colors.grey.shade300)];
     }
+
+    stats.sort((a, b) => b.itemCount.compareTo(a.itemCount));
+
     final palette = [
       const Color(0xFFE27D19),
       const Color(0xFFFFAF5F),
@@ -573,17 +576,28 @@ class _AnalyticsPageState extends State<AnalyticsPage>
       const Color(0xFF8E5A2C),
       const Color(0xFF6F3A12),
     ];
-    return List.generate(stats.length, (index) {
-      final stat = stats[index];
+    final slices = <_ChartData>[];
+    final topCount = stats.length < 3 ? stats.length : 3;
+
+    for (int i = 0; i < topCount; i++) {
+      final stat = stats[i];
       final label = stat.categoryName?.isNotEmpty == true
           ? stat.categoryName!
           : 'Category ${stat.categoryId}';
-      return _ChartData(
-        label,
-        stat.itemCount,
-        palette[index % palette.length],
+      slices.add(
+        _ChartData(label, stat.itemCount, palette[i % palette.length]),
       );
-    });
+    }
+
+    if (stats.length > 3) {
+      final othersCount =
+          stats.skip(3).fold<int>(0, (sum, stat) => sum + stat.itemCount);
+      if (othersCount > 0) {
+        slices.add(_ChartData('Others', othersCount, const Color(0xFF382008)));
+      }
+    }
+
+    return slices;
   }
 
   List<_ChartData> _failedChartSlices(AdminAnalyticsReport report) {
